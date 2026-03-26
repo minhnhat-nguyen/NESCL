@@ -9,6 +9,4 @@ pyyaml==5.4.1
 colorlog==4.7.2
 colorama==0.4.4
 tensorboard==2.5.0
-protobuf==3.20.0
-Cython
 cython==0.29.21
