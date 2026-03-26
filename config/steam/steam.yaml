@@ -13,7 +13,7 @@ epochs: 500
 train_batch_size: 8192
 eval_batch_size: 8192
 neg_sampling:
-    uniform: 1
+    popularity: 1
 
 # Applying the 7:2:1 chronological split
 eval_args:
