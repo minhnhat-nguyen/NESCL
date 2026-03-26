@@ -194,7 +194,12 @@ def run_recbole(model=None, dataset=None, config_file_list=None, config_dict=Non
 
 
 def run_evaluate(dataloader_file=None, model_file=None):
-    checkpoint = torch.load(model_file, weights_only=False)
+    try:
+        checkpoint = torch.load(model_file, weights_only=False)
+    except TypeError:
+        # For older PyTorch versions that do not support weights_only parameter
+        checkpoint = torch.load(model_file)
+
     config = checkpoint['config']
     init_logger(config)
 
@@ -261,7 +266,12 @@ def run_evaluate(dataloader_file=None, model_file=None):
 
 
 def run_sparsity_analysis(dataloader_file=None, model_file=None):
-    checkpoint = torch.load(model_file, weights_only=False)
+    try:
+        checkpoint = torch.load(model_file, weights_only=False)
+    except TypeError:
+        # For older PyTorch versions that do not support weights_only parameter
+        checkpoint = torch.load(model_file)
+
     config = checkpoint['config']
     init_logger(config)
 
@@ -435,7 +445,12 @@ def load_data_and_model(model_file, dataset_file=None, dataloader_file=None):
             - valid_data (AbstractDataLoader): The dataloader for validation.
             - test_data (AbstractDataLoader): The dataloader for testing.
     """
-    checkpoint = torch.load(model_file, weights_only=False)
+    try:
+        checkpoint = torch.load(model_file, weights_only=False)
+    except TypeError:
+        # For older PyTorch versions that do not support weights_only parameter
+        checkpoint = torch.load(model_file)
+
     config = checkpoint['config']
     init_logger(config)
 
