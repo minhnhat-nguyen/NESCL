@@ -37,3 +37,4 @@ valid_metric_bigger: True
 eval_batch_size: 4096
 loss_decimal_place: 4
 metric_decimal_place: 4
+NEG_PREFIX: 'neg_'
