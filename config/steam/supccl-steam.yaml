@@ -1,4 +1,4 @@
-ssl_reg: 0.1
+ssl_reg: 0.01
 ssl_ratio: 0.3
 ssl_temp: 0.1
 # ssl_mode: 0-user side, 1-item side, 2-both side, 3-merge
