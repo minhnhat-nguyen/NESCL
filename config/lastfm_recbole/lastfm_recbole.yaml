@@ -8,7 +8,7 @@ load_col:
 embedding_size: 64
 
 # Training and evaluation config
-epochs: 500
+epochs: 1000
 train_batch_size: 8192
 eval_batch_size: 16384
 neg_sampling:
@@ -30,3 +30,4 @@ save_dataloaders: True
 seed: 2020
 show_progress: False
 field_separator: "\t"
+stopping_step: 30
