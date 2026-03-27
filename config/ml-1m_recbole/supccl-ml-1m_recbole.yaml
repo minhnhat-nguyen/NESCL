@@ -6,18 +6,18 @@ ssl_mode: 3
 learning_rate: 0.01
 n_layers: 3
 reg_weight: 0.00001
-# aug_type: 0-node dropout, 1-edge dropout, 2-random walk
-aug_type: 0
+# aug_type: 1-node dropout, 1-edge dropout, 2-random walk
+aug_type: 1
 
 sub_graph_pool: 300
-ssl_strategy: 0
+ssl_strategy: 5
 # positive_cl_type: 1-'out', 2='in'
 positive_cl_type: 2
 k: 5
 
-lightgcn_flag: True
+lightgcn_flag: False
 random_strategy: True
-augmentation: False
+augmentation: True
 early_stop: False
 add_initial_embedding: False
 #set_batch_nodes: False
