@@ -544,7 +544,9 @@ class SUPCCL(GeneralRecommender):
         return loss, mf_loss, ssl_loss
 
 
-    def neighbor_sample(self, input_list, weight_list):
+    def neighbor_sample(self, input_list, weight_list, fallback=None):
+        if len(input_list) == 0:
+            return fallback, 1.0
         if len(input_list) == 1:
             return input_list[0], weight_list[0]
         else:
@@ -666,10 +668,10 @@ class SUPCCL(GeneralRecommender):
                     # add user and her k-nearest neighbors positive pair
                     if self.similar_user_neighbors:
                         if self.random_strategy:
-                            # the prob_sampling used in self.neighbor_sample controls whether sampling the collaborative neighbors with their probabilities 
-                            sample_user, sample_weight = self.neighbor_sample(self.user_similar_neighbors_mat[user], self.user_similar_neighbors_weights_mat[user])
+                            # the prob_sampling used in self.neighbor_sample controls whether sampling the collaborative neighbors with their probabilities
+                            sample_user, sample_weight = self.neighbor_sample(self.user_similar_neighbors_mat[user], self.user_similar_neighbors_weights_mat[user], fallback=user)
 
-                            # sample_user_weight_flag controls whether add weights to the collaborative neighbors 
+                            # sample_user_weight_flag controls whether add weights to the collaborative neighbors
                             if self.sample_user_weight_flag:
                                 batch_user_weight.append(sample_weight * self.sample_user_weight)
                             else:
@@ -712,8 +714,8 @@ class SUPCCL(GeneralRecommender):
                     # add item and its k-nearest neighbors positive pair
                     if self.similar_item_neighbors:
                         if self.random_strategy:
-                            sample_item, sample_weight = self.neighbor_sample(self.item_similar_neighbors_mat[item-self.n_users], self.item_similar_neighbors_weights_mat[item-self.n_users])
-                            sample_item += +self.n_users
+                            sample_item, sample_weight = self.neighbor_sample(self.item_similar_neighbors_mat[item-self.n_users], self.item_similar_neighbors_weights_mat[item-self.n_users], fallback=(item-self.n_users))
+                            sample_item += self.n_users
 
                             if self.sample_item_weight_flag:
                                 batch_item_weight.append(sample_weight * self.sample_item_weight)

@@ -10,7 +10,7 @@ reg_weight: 0.00001
 aug_type: 1
 
 sub_graph_pool: 300
-ssl_strategy: 5
+ssl_strategy: 9
 # positive_cl_type: 1-'out', 2='in'
 positive_cl_type: 2
 k: 5
