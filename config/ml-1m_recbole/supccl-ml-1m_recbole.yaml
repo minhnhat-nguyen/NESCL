@@ -10,14 +10,14 @@ reg_weight: 0.00001
 aug_type: 0
 
 sub_graph_pool: 300
-ssl_strategy: 9
+ssl_strategy: 0
 # positive_cl_type: 1-'out', 2='in'
 positive_cl_type: 2
 k: 5
 
 lightgcn_flag: True
 random_strategy: True
-augmentation: True
+augmentation: False
 early_stop: False
 add_initial_embedding: False
 #set_batch_nodes: False
