@@ -6,8 +6,8 @@ ssl_mode: 3
 learning_rate: 0.001
 n_layers: 3
 reg_weight: 0.00001
-# aug_type: 0-node dropout, 1-edge dropout, 2-random walk
-aug_type: 0
+# aug_type: 1-node dropout, 1-edge dropout, 2-random walk
+aug_type: 1
 
 sub_graph_pool: 300
 ssl_strategy: 9
