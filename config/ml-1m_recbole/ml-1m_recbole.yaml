@@ -1,0 +1,33 @@
+# dataset config
+USER_ID_FIELD: user_id
+ITEM_ID_FIELD: item_id
+TIME_FIELD: timestamp
+load_col:
+    inter: [user_id, item_id, rating, timestamp]
+
+# model config
+embedding_size: 64
+
+# Training and evaluation config
+epochs: 500
+train_batch_size: 2048
+eval_batch_size: 4096
+neg_sampling:
+    popularity: 1
+
+# Applying the 7:2:1 chronological split
+eval_args:
+    group_by: user
+    order: TO
+    split: {'RS': [0.7,0.2,0.1]}
+    mode: full
+
+metrics: ['Recall', 'MRR', 'NDCG', 'Hit', 'Precision']
+topk: 20
+valid_metric: NDCG@20
+metric_decimal_place: 4
+
+save_dataloaders: True
+seed: 2020
+show_progress: False
+field_separator: "\t"
