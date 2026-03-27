@@ -1,4 +1,4 @@
-ssl_reg: 0.001
+ssl_reg: 0.1
 ssl_ratio: 0.3
 ssl_temp: 0.2
 # ssl_mode: 0-user side, 1-item side, 2-both side, 3-merge
@@ -15,7 +15,7 @@ ssl_strategy: 9
 positive_cl_type: 2
 k: 5
 
-lightgcn_flag: False
+lightgcn_flag: True
 random_strategy: True
 augmentation: True
 early_stop: False
