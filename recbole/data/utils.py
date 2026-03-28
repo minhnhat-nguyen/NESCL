@@ -84,6 +84,8 @@ def save_split_dataloaders(config, dataloaders):
         dataloaders (tuple of AbstractDataLoader): The split dataloaders.
     """
     save_path = config['checkpoint_dir']
+    if not os.path.exists(save_path):
+        os.makedirs(save_path, exist_ok=True)
     saved_dataloaders_file = f'{config["dataset"]}-for-{config["model"]}-dataloader.pth'
     file_path = os.path.join(save_path, saved_dataloaders_file)
     logger = getLogger()
