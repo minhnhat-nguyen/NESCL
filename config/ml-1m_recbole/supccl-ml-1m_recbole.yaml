@@ -1,13 +1,13 @@
-ssl_reg: 0.05
-ssl_ratio: 0.1
+ssl_reg: 0.1
+ssl_ratio: 0.2
 ssl_temp: 0.1
 # ssl_mode: 0-user side, 1-item side, 2-both side, 3-merge
 ssl_mode: 3
-learning_rate: 0.01
-n_layers: 3
-reg_weight: 0.00001
-# aug_type: 1-node dropout, 1-edge dropout, 2-random walk
-aug_type: 1
+learning_rate: 0.002
+n_layers: 2
+reg_weight: 0.0001
+# aug_type: 0-node dropout, 1-edge dropout, 2-random walk
+aug_type: 2
 
 sub_graph_pool: 300
 ssl_strategy: 9
