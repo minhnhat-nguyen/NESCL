@@ -1,6 +1,6 @@
 import re
 
-log_content = open('log.log', 'r').read()
+log_content = open('log2.log', 'r').read()
 
 # Metrics
 recall_pattern = r'recall@20 : ([\d\.]+)'
