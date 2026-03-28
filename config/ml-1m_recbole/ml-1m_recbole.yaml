@@ -10,6 +10,7 @@ embedding_size: 64
 
 # Training and evaluation config
 epochs: 150
+stopping_step: 30
 train_batch_size: 4096
 eval_batch_size: 4096
 neg_sampling:
