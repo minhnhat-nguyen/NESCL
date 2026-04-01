@@ -41,8 +41,8 @@ supcon_flag: False
 #renormalize_similarity: True
 prob_sampling: False
 
-# Recall@20, NDCG@10
-valid_metric: NDCG@10
+# Recall@20, NDCG@20
+valid_metric: Recall@20
 
 epochs: 1000
 train_data_step: 8192
