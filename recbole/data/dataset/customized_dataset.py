@@ -138,43 +138,85 @@ from recbole.data.dataset.dataset import Dataset
 import os
 
 class NESCLDataset(Dataset):
+    """Custom dataset that reads pre-split train/valid/test.txt from data/{dataset}/
+    and converts them into RecBole .inter format, preserving the original splits.
+    """
+
+    # Mapping from raw column names to RecBole typed column names
+    COLUMN_TYPE_MAP = {
+        'user_id': 'user_id:token',
+        'item_id': 'item_id:token',
+        'rating': 'rating:float',
+        'timestamp': 'timestamp:float',
+    }
+
     def __init__(self, config):
         config['benchmark_filename'] = ['train', 'valid', 'test']
         config['field_separator'] = '\t'
+        # Remove val_interval so ALL interactions from pre-split files are kept
+        config['val_interval'] = None
         if 'data_path' in config:
             os.makedirs(config['data_path'], exist_ok=True)
         super().__init__(config)
 
-    def _load_inter_feat(self, token, dataset_path):
-        source_dir = os.path.join('data', 'NESCL', token)
-        # fallback to standard dataset path if it doesn't exist in data/NESCL
-        if not os.path.exists(source_dir):
-            if os.path.exists(os.path.join('data', 'NESCL', token.replace('_recbole', ''))):
-                source_dir = os.path.join('data', 'NESCL', token.replace('_recbole', ''))
+    def _find_source_dir(self, token):
+        """Search for the source data directory under data/."""
+        candidates = [
+            os.path.join('data', token),
+            os.path.join('data', 'NESCL', token),
+            os.path.join('data', token.replace('_recbole', '')),
+            os.path.join('data', 'NESCL', token.replace('_recbole', '')),
+        ]
+        for path in candidates:
+            if os.path.exists(path) and os.path.isdir(path):
+                return path
+        return None
+
+    def _build_typed_header(self, raw_header_line):
+        """Convert 'user_id\\titem_id\\trating\\ttimestamp' into
+        'user_id:token\\titem_id:token\\trating:float\\ttimestamp:float'
+        """
+        raw_cols = raw_header_line.strip().split('\t')
+        typed_cols = []
+        for col in raw_cols:
+            if col in self.COLUMN_TYPE_MAP:
+                typed_cols.append(self.COLUMN_TYPE_MAP[col])
             else:
-                self.logger.warning(f"Custom data directory {source_dir} not found. Falling back to native.")
-                return super()._load_inter_feat(token, dataset_path)
-            
+                # Default unknown columns to token type
+                typed_cols.append(f'{col}:token')
+        return '\t'.join(typed_cols) + '\n'
+
+    def _load_inter_feat(self, token, dataset_path):
+        source_dir = self._find_source_dir(token)
+        if source_dir is None:
+            self.logger.warning(
+                f"Custom data directory for '{token}' not found under data/. "
+                f"Falling back to native RecBole loading."
+            )
+            return super()._load_inter_feat(token, dataset_path)
+
         target_dir = os.path.join('dataset', f'NESCL_{token}')
         os.makedirs(target_dir, exist_ok=True)
-        
+
         for split in self.benchmark_filename_list:
             source_file = os.path.join(source_dir, f'{split}.txt')
             target_file = os.path.join(target_dir, f'NESCL_{token}.{split}.inter')
-            
+
             if not os.path.exists(source_file):
                 self.logger.warning(f"Expected custom split {source_file} not found.")
                 continue
-                
+
             self.logger.info(f"Converting {source_file} to {target_file}")
             with open(source_file, 'r', encoding=self.config['encoding']) as fin:
-                header = fin.readline()
+                raw_header = fin.readline()
+                typed_header = self._build_typed_header(raw_header)
                 with open(target_file, 'w', encoding=self.config['encoding']) as fout:
-                    fout.write("user_id:token\titem_id:token\trating:float\ttimestamp:float\n")
+                    fout.write(typed_header)
                     for line in fin:
                         fout.write(line)
-        
+
         super()._load_inter_feat(token=f'NESCL_{token}', dataset_path=target_dir)
+
 
 class SUPCCLDataset(NESCLDataset):
     pass

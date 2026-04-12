@@ -6,8 +6,13 @@ from recbole.utils import init_logger, init_seed
 import logging
 
 def build_dataloader(model, dataset):
-    # This automatically invokes customized_dataset.py logic due to Config mappings.
-    config = Config(model=model, dataset=dataset, config_file_list=[f"config/{dataset}/{dataset}.yaml"])
+    # Load both dataset config and model-specific config, matching run_recbole_autodl.py logic
+    config_file_list = [f"config/{dataset}/{dataset}.yaml"]
+    model_config = f"config/{dataset}/{model.lower()}-{dataset}.yaml"
+    if os.path.exists(model_config):
+        config_file_list.append(model_config)
+    
+    config = Config(model=model, dataset=dataset, config_file_list=config_file_list)
     
     # Initialize logger
     init_logger(config)
