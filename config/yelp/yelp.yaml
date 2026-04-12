@@ -33,3 +33,4 @@ metric_decimal_place: 4
 
 embedding_size: 64
 seed: 2020
+show_progress: False
