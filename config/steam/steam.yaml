@@ -1,32 +1,34 @@
-# dataset config
+# dataset config — Steam
+# Source: steam_reviews_incremental .npz CSR matrices (36321 users x 1980 items)
+# k-core: users>=20, games>=100; chronological 7:2:1 split done upstream
 USER_ID_FIELD: user_id
 ITEM_ID_FIELD: item_id
-TIME_FIELD: timestamp
 load_col:
-    inter: [user_id, item_id, timestamp]
+    inter: [user_id, item_id]
 
 # model config
 embedding_size: 64
 
 # Training and evaluation config
 epochs: 500
+stopping_step: 30
 train_batch_size: 8192
 eval_batch_size: 8192
 neg_sampling:
-    popularity: 1
+    uniform: 1
 
-# Applying the 7:2:1 chronological split
 eval_args:
     group_by: user
-    order: TO
-    split: {'RS': [0.7,0.2,0.1]}
+    order: RO
+    split: {'RS': [0.8, 0.1, 0.1]}
     mode: full
 
 metrics: ['Recall', 'MRR', 'NDCG', 'Hit', 'Precision']
-topk: 20
+topk: [10, 20]
 valid_metric: NDCG@20
 metric_decimal_place: 4
 
 save_dataloaders: True
 seed: 2020
+show_progress: False
 field_separator: "\t"
