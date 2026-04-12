@@ -133,3 +133,48 @@ class DIENDataset(SequentialDataset):
 
         new_data.update(Interaction(new_dict))
         self.inter_feat = new_data
+
+from recbole.data.dataset.dataset import Dataset
+import os
+
+class NESCLDataset(Dataset):
+    def __init__(self, config):
+        config['benchmark_filename'] = ['train', 'valid', 'test']
+        config['field_separator'] = '\t'
+        if 'data_path' in config:
+            os.makedirs(config['data_path'], exist_ok=True)
+        super().__init__(config)
+
+    def _load_inter_feat(self, token, dataset_path):
+        source_dir = os.path.join('data', 'NESCL', token)
+        # fallback to standard dataset path if it doesn't exist in data/NESCL
+        if not os.path.exists(source_dir):
+            if os.path.exists(os.path.join('data', 'NESCL', token.replace('_recbole', ''))):
+                source_dir = os.path.join('data', 'NESCL', token.replace('_recbole', ''))
+            else:
+                self.logger.warning(f"Custom data directory {source_dir} not found. Falling back to native.")
+                return super()._load_inter_feat(token, dataset_path)
+            
+        target_dir = os.path.join('dataset', f'NESCL_{token}')
+        os.makedirs(target_dir, exist_ok=True)
+        
+        for split in self.benchmark_filename_list:
+            source_file = os.path.join(source_dir, f'{split}.txt')
+            target_file = os.path.join(target_dir, f'NESCL_{token}.{split}.inter')
+            
+            if not os.path.exists(source_file):
+                self.logger.warning(f"Expected custom split {source_file} not found.")
+                continue
+                
+            self.logger.info(f"Converting {source_file} to {target_file}")
+            with open(source_file, 'r', encoding=self.config['encoding']) as fin:
+                header = fin.readline()
+                with open(target_file, 'w', encoding=self.config['encoding']) as fout:
+                    fout.write("user_id:token\titem_id:token\trating:float\ttimestamp:float\n")
+                    for line in fin:
+                        fout.write(line)
+        
+        super()._load_inter_feat(token=f'NESCL_{token}', dataset_path=target_dir)
+
+class SUPCCLDataset(NESCLDataset):
+    pass
