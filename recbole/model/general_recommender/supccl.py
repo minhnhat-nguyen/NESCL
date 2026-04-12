@@ -320,7 +320,7 @@ class SUPCCL(GeneralRecommender):
         aug_type = self.aug_type
 
         sub_mat_dict = {}
-        for idx in tqdm(range(self.sub_graph_pool)):
+        for idx in range(self.sub_graph_pool):
             sub_mat_dict[idx] = self.get_norm_adj_mat(True, aug_type).to(self.device) if self.gpu_available else self.get_norm_adj_mat(True, aug_type)
         return sub_mat_dict
 
