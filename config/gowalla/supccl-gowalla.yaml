@@ -18,7 +18,7 @@ k: 5
 lightgcn_flag: False
 random_strategy: True
 augmentation: True
-early_stop: False
+early_stop: True
 add_initial_embedding: False
 #set_batch_nodes: False
 #add_more_neighbors: False
@@ -45,7 +45,7 @@ prob_sampling: False
 valid_metric: Recall@20
 
 epochs: 200
-train_data_step: 1024
+train_data_step: 4096
 val_data_step: 256
 test_data_step: 256
 

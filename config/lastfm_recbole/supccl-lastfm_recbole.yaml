@@ -45,7 +45,7 @@ prob_sampling: False
 valid_metric: Recall@20
 
 epochs: 1000
-train_data_step: 8192
+train_data_step: 4096
 val_data_step: 2048
 test_data_step: 2048
 

@@ -30,4 +30,3 @@ save_dataloaders: True
 seed: 2020
 show_progress: False
 field_separator: "\t"
-stopping_step: 30

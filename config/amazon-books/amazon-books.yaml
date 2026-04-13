@@ -8,9 +8,10 @@ load_col:
 embedding_size: 64
 
 # Training and evaluation config
+stopping_step: 20
 epochs: 500
-train_batch_size: 4096
-eval_batch_size: 4096
+train_batch_size: 1024
+eval_batch_size: 1024
 neg_sampling:
     uniform: 1
 eval_args:

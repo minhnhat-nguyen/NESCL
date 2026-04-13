@@ -18,7 +18,7 @@ k: 15
 lightgcn_flag: False
 random_strategy: True 
 augmentation: True
-early_stop: False
+early_stop: True
 add_initial_embedding: False
 #set_batch_nodes: False
 #add_more_neighbors: False
