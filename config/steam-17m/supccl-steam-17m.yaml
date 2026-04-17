@@ -15,7 +15,7 @@ ssl_strategy: 9
 positive_cl_type: 2
 k: 5
 
-lightgcn_flag: False
+lightgcn_flag: True
 random_strategy: True
 augmentation: True
 early_stop: False
