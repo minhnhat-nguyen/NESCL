@@ -226,11 +226,7 @@ def get_gpu_usage(device=None):
     Returns:
         str: it contains the info about reserved memory and total memory of given device.
     """
-    if device is None or device.type == 'cpu':
-        return 'N/A'
-    if device.type == 'mps':
-        # torch.mps doesn't have an equivalent to max_memory_reserved currently, returning N/A
-        return 'MPS N/A'
+
     reserved = torch.cuda.max_memory_reserved(device) / 1024 ** 3
     total = torch.cuda.get_device_properties(device).total_memory / 1024 ** 3
 

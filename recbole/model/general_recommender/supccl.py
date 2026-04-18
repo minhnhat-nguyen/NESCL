@@ -234,15 +234,15 @@ class SUPCCL(GeneralRecommender):
         self.apply(xavier_uniform_initialization)
         self.other_parameter_name = ['restore_user_e', 'restore_item_e']
 
+        self.gpu_available = torch.cuda.is_available() and config['use_gpu']
+
         self.device = config['device']
-        self.gpu_available = (self.device.type != 'cpu')
 
         self.user_np, self.item_np = self.dataset.inter_feat.numpy()[config['USER_ID_FIELD']], self.dataset.inter_feat.numpy()[config['ITEM_ID_FIELD']]
         self.n_nodes = self.n_users + self.n_items
 
         # generate intermediate data
-        self.sparse_device = self.device if self.device.type != 'mps' else torch.device('cpu')
-        self.norm_adj_matrix = self.get_norm_adj_mat().to(self.sparse_device)
+        self.norm_adj_matrix = self.get_norm_adj_mat().to(self.device)
         
         self.ssl_strategy = config['ssl_strategy']
         self.positive_cl_type = config['positive_cl_type']
@@ -321,7 +321,7 @@ class SUPCCL(GeneralRecommender):
 
         sub_mat_dict = {}
         for idx in range(self.sub_graph_pool):
-            sub_mat_dict[idx] = self.get_norm_adj_mat(True, aug_type).to(self.sparse_device) if self.gpu_available else self.get_norm_adj_mat(True, aug_type)
+            sub_mat_dict[idx] = self.get_norm_adj_mat(True, aug_type).to(self.device) if self.gpu_available else self.get_norm_adj_mat(True, aug_type)
         return sub_mat_dict
 
     def get_norm_adj_mat(self, is_subgraph=False, aug_type=0):
@@ -386,7 +386,7 @@ class SUPCCL(GeneralRecommender):
 
         adj_matrix = adj_matrix.tocoo()
 
-        index = torch.LongTensor(np.array([adj_matrix.row, adj_matrix.col]))
+        index = torch.LongTensor([adj_matrix.row, adj_matrix.col])
         data = torch.FloatTensor(adj_matrix.data)
         SparseL = torch.sparse.FloatTensor(index, data, torch.Size(adj_matrix.shape))
 
@@ -446,29 +446,15 @@ class SUPCCL(GeneralRecommender):
             embeddings_list_sub2 = []
 
         for layer_idx in range(self.n_layers):
-            if self.device.type == 'mps':
-                all_embeddings = all_embeddings.to(self.sparse_device)
-                all_embeddings = torch.sparse.mm(self.norm_adj_matrix, all_embeddings)
-                all_embeddings = all_embeddings.to(self.device)
-            else:
-                all_embeddings = torch.sparse.mm(self.norm_adj_matrix, all_embeddings)
+            all_embeddings = torch.sparse.mm(self.norm_adj_matrix, all_embeddings)
             embeddings_list.append(all_embeddings)
 
             #'''
             if self.augmentation:
-                if self.device.type == 'mps':
-                    all_embeddings_sub1 = all_embeddings_sub1.to(self.sparse_device)
-                    all_embeddings_sub1 = torch.sparse.mm(sub_mat['sub_mat_1_layer_%d' % layer_idx], all_embeddings_sub1)
-                    all_embeddings_sub1 = all_embeddings_sub1.to(self.device)
-
-                    all_embeddings_sub2 = all_embeddings_sub2.to(self.sparse_device)
-                    all_embeddings_sub2 = torch.sparse.mm(sub_mat['sub_mat_2_layer_%d' % layer_idx], all_embeddings_sub2)
-                    all_embeddings_sub2 = all_embeddings_sub2.to(self.device)
-                else:
-                    all_embeddings_sub1 = torch.sparse.mm(sub_mat['sub_mat_1_layer_%d' % layer_idx], all_embeddings_sub1)
-                    all_embeddings_sub2 = torch.sparse.mm(sub_mat['sub_mat_2_layer_%d' % layer_idx], all_embeddings_sub2)
-                    
+                all_embeddings_sub1 = torch.sparse.mm(sub_mat['sub_mat_1_layer_%d' % layer_idx], all_embeddings_sub1)
                 embeddings_list_sub1.append(all_embeddings_sub1)
+
+                all_embeddings_sub2 = torch.sparse.mm(sub_mat['sub_mat_2_layer_%d' % layer_idx], all_embeddings_sub2)
                 embeddings_list_sub2.append(all_embeddings_sub2)
             #'''
 
