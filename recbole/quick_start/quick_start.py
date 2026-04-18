@@ -195,12 +195,18 @@ def run_recbole(model=None, dataset=None, config_file_list=None, config_dict=Non
 
 def run_evaluate(dataloader_file=None, model_file=None):
     try:
-        checkpoint = torch.load(model_file, weights_only=False)
+        checkpoint = torch.load(model_file, map_location='cpu', weights_only=False)
     except TypeError:
         # For older PyTorch versions that do not support weights_only parameter
-        checkpoint = torch.load(model_file)
+        checkpoint = torch.load(model_file, map_location='cpu')
 
     config = checkpoint['config']
+    if torch.cuda.is_available() and config['use_gpu']:
+        config['device'] = torch.device('cuda')
+    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available() and config['use_gpu']:
+        config['device'] = torch.device('mps')
+    else:
+        config['device'] = torch.device('cpu')
     init_logger(config)
 
     train_data, valid_data, test_data = load_split_dataloaders(dataloader_file)

@@ -16,10 +16,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', '-m', type=str, default='BPR', help='name of models')
     parser.add_argument('--dataset', '-d', type=str, default='ml-100k', help='name of datasets')
-    parser.add_argument('--config', type=bool, default=None, help='whether to set config files')
+    parser.add_argument('--config', type=lambda x: (str(x).lower() in ['true', '1', 'yes']), default=False, help='whether to set config files')
     parser.add_argument('--dataloader_file', type=str, default=None, help='saved dataloader_file')
     parser.add_argument('--model_file', type=str, default=None, help='saved model_file')
-    parser.add_argument('--evaluate', type=bool, default=False, help='switch the training & evaluate')
+    parser.add_argument('--evaluate', action='store_true', help='switch the training & evaluate')
 
     args, _ = parser.parse_known_args()
 
@@ -45,4 +45,3 @@ if __name__ == '__main__':
     title = 'AutoDL-%s-%s-training' % (args.model, args.dataset)
     content = 'AutoDL-success'
     notify(title, content)
-    os.system('shutdown')

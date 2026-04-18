@@ -114,9 +114,9 @@ class Trainer(AbstractTrainer):
         self.valid_metric = config['valid_metric'].lower()
         self.valid_metric_bigger = config['valid_metric_bigger']
         self.test_batch_size = config['eval_batch_size']
-        self.gpu_available = torch.cuda.is_available() and config['use_gpu']
-
         self.device = config['device']
+        self.gpu_available = (self.device.type != 'cpu')
+
         self.checkpoint_dir = config['checkpoint_dir']
         ensure_dir(self.checkpoint_dir)
         saved_model_file = '{}-{}-{}.pth'.format(self.config['model'], self.config['dataset'], get_local_time())
@@ -1153,9 +1153,8 @@ class Trainer_Fusion(AbstractTrainer_Fusion):
         self.valid_metric = config_1['valid_metric'].lower()
         self.valid_metric_bigger = config_1['valid_metric_bigger']
         self.test_batch_size = config_1['eval_batch_size']
-        self.gpu_available = torch.cuda.is_available() and config_1['use_gpu']
-
         self.device = config_1['device']
+        self.gpu_available = (self.device.type != 'cpu')
 
         self.eval_type = config_1['eval_type']
         self.eval_collector_fusion = Collector_Fusion(config_1)
